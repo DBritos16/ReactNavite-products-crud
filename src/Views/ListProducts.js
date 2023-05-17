@@ -1,9 +1,10 @@
 
 import React, { useEffect, useState } from 'react'
 import { StatusBar } from 'expo-status-bar';
-import { Button, Image, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Image, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { ScrollView } from 'react-native';
 import { FlatList } from 'react-native';
+import { AntDesign, Ionicons, Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 
 const ListProducts = ({ navigation }) => {
 
@@ -12,36 +13,48 @@ const ListProducts = ({ navigation }) => {
 
     const getProducts = async () => {
 
-        const req = await fetch('http://192.168.216.205:3000/product');
+        const req = await fetch('http://192.168.216.59:3000/product');
         const res = await req.json();
         setProducts(res);
+        //alert('Cargado');
     }
 
     const result = filter? products.filter(e=> e.name.includes(filter)) : products
 
     useEffect(() => {
         getProducts();
+        console.log('dasdasd')
     }, []);
 
-    const Item = ({ data }) => (
-        <View style={styles.cardContainer}>
-            <Image source={{ uri: data.imageURL }} style={styles.cardImage} />
-            <View style={styles.cardTextContainer}>
-                <Text style={styles.cardTitle}>{data.name}</Text>
-                <Text style={styles.cardDescription}>{data.description}</Text>
+    const Card = ({ data }) => {
+        return (
+          <View style={styles.Cardcontainer}>
+            <View style={styles.imageContainer}>
+              <Image source={{uri: data.imageURL}} style={styles.image} />
             </View>
-        </View>
-    )
+            <View style={styles.textContainer}>
+              <Text style={styles.title}>{data.name}</Text>
+              <Text style={styles.subtitle}>{data.description}</Text>
+              <Text>${data.price} USD</Text>
+              <View style={styles.buttonArea}>
+                    <Pressable onPress={()=>navigation.navigate('edit', {productID: data._id})}><Feather name="edit-3" size={19} color="black" /></Pressable>
+                    <Pressable><MaterialCommunityIcons name="delete-outline" size={19} color="black" /></Pressable>
+              </View>
+            </View>
+          </View>
+        );
+      };
 
     return (
         <ScrollView style={styles.container}>
             <View style={styles.header}>
                 <TextInput style={styles.searchInput} onChangeText={(value)=>setFilter(value)} placeholder='Buscar tarea' />
-                <Pressable style={styles.button} onPress={() => navigation.navigate('create')}><Text>Crear Tarea</Text></Pressable>
+                <Pressable style={styles.button} onPress={() => navigation.navigate('create')}><AntDesign name="addfile" size={24} color="white" /></Pressable>
+                <Pressable style={styles.button} onPress={() => getProducts()}><Ionicons name="reload" size={24} color="white" /></Pressable>
             </View>
-            
-            <FlatList data={result} renderItem={({ item }) => <Item data={item}/>} />
-
+            <View >
+                <FlatList data={result} renderItem={({ item }) => <Card data={item}/>} />
+            </View>
         </ScrollView>
     )
 }
@@ -53,56 +66,63 @@ const styles = StyleSheet.create({
     },
     header: {
         flexDirection: 'row',
-        justifyContent: 'space-between'
+        justifyContent: 'space-between',
+        marginBottom: 10
     },
     searchInput: {
         borderColor: 'black',
         borderWidth: 1,
         borderRadius: 20,
         backgroundColor: '#f6f6f6',
-        width: 260,
-        height: 45,
+        width: 270,
+        height: 40,
         paddingLeft: 10
     },
     button: {
         borderRadius: 20,
         backgroundColor: '#00a000',
-        width: 90,
-        height: 45,
+        width: 40,
+        height: 40,
         justifyContent: 'center',
         alignItems: 'center',
     },
-    cardContainer: {
+    Cardcontainer: {
+        flexDirection: 'row',
         backgroundColor: '#fff',
         borderRadius: 8,
-        elevation: 4,
-        marginHorizontal: 16,
-        marginVertical: 8,
-        overflow: 'hidden',
-        shadowColor: '#000',
-        shadowOffset: {
-            height: 2,
-            width: 0,
-        },
-        shadowOpacity: 0.2,
-        shadowRadius: 4,
-    },
-    cardImage: {
-        height: 240,
-        resizeMode: 'cover',
+        elevation: 2,
+        margin: 8,
+      },
+      imageContainer: {
+        width: '50%',
+      },
+      image: {
         width: '100%',
-    },
-    cardTextContainer: {
-        padding: 16,
-    },
-    cardTitle: {
-        fontSize: 24,
+        height: 150,
+        resizeMode: 'cover',
+        borderTopLeftRadius: 8,
+        borderBottomLeftRadius: 8,
+      },
+      textContainer: {
+        width: '50%',
+        padding: 16
+      },
+      title: {
+        fontSize: 18,
         fontWeight: 'bold',
         marginBottom: 8,
-    },
-    cardDescription: {
+      },
+      subtitle: {
         fontSize: 16,
-    },
+        color: '#666',
+        marginBottom: 3
+      },
+      buttonArea: {
+        flexDirection: 'row',
+        justifyContent: 'flex-end',
+        position: 'relative',
+        bottom: -18
+      }
 });
 
 

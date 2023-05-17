@@ -12,7 +12,7 @@ const CreateProduct = ({navigation}) => {
   });
 
   const addProduct = async()=>{
-    const req = await fetch('http://192.168.216.205:3000/product/create', {
+    const req = await fetch('http://192.168.216.59:3000/product/create', {
       method: 'POST',
       body: JSON.stringify(form),
       headers: {
@@ -33,9 +33,9 @@ const CreateProduct = ({navigation}) => {
           <TextInput style={styles.inputStyle} onChangeText={(value)=>setForm({...form, name: value})} placeholder="Name"></TextInput>
           <TextInput style={styles.inputStyle} onChangeText={(value)=>setForm({...form, description: value})} placeholder="Description"></TextInput>
           <TextInput style={styles.inputStyle} onChangeText={(value)=>setForm({...form, imageURL: value})} placeholder="Image URL"></TextInput>
-          <TextInput style={styles.inputStyle} onChangeText={(value)=>setForm({...form, price: parseInt(value)})} placeholder="Price"></TextInput>
+          <TextInput style={styles.inputStyle} keyboardType='numeric' onChangeText={(value)=>setForm({...form, price: parseInt(value)})} placeholder="Price"></TextInput>
           <View style={{margin: 10}}>
-            <TouchableOpacity style={styles.buttonStyle} onPress={()=>addProduct()}><Text style={{color: 'white'}} onPress={()=>addProduct()}>Crear tarea</Text></TouchableOpacity>
+            <TouchableOpacity style={styles.buttonStyle} onPress={()=>addProduct()}><Text style={{color: 'white'}}>Crear producto</Text></TouchableOpacity>
           </View>
         </View> 
         {/* <Button title="volver atras" onPress={()=>navigation.navigate('home')}/> */}
