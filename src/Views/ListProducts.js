@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from 'react'
 import { StatusBar } from 'expo-status-bar';
-import { Image, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Image, Pressable, StyleSheet, Text, TextInput, View, Modal, TouchableOpacity } from 'react-native';
 import { ScrollView } from 'react-native';
 import { FlatList } from 'react-native';
 import { AntDesign, Ionicons, Feather, MaterialCommunityIcons } from '@expo/vector-icons';
@@ -9,11 +9,13 @@ import { AntDesign, Ionicons, Feather, MaterialCommunityIcons } from '@expo/vect
 const ListProducts = ({ navigation }) => {
 
     const [products, setProducts] = useState([]);
+    const [modalVisible, setModalVisible] = useState(false);
     const [filter, setFilter] = useState('');
+    const [id, setId] = useState('');
 
     const getProducts = async () => {
 
-        const req = await fetch('http://192.168.216.59:3000/product');
+        const req = await fetch('http://192.168.216.229:3000/product');
         const res = await req.json();
         setProducts(res);
         //alert('Cargado');
@@ -21,9 +23,26 @@ const ListProducts = ({ navigation }) => {
 
     const result = filter? products.filter(e=> e.name.includes(filter)) : products
 
+
+    const deleteProduct = async()=>{
+
+      const req = await fetch(`http://192.168.216.229:3000/product/delete/${id}`, {
+        method: 'DELETE'
+      });
+
+      console.log(id)
+
+      if(req.ok){
+        getProducts()
+        setModalVisible(false);
+        return alert('Eliminado con exito');
+      }
+
+    }
+
     useEffect(() => {
         getProducts();
-        console.log('dasdasd')
+        
     }, []);
 
     const Card = ({ data }) => {
@@ -38,7 +57,7 @@ const ListProducts = ({ navigation }) => {
               <Text>${data.price} USD</Text>
               <View style={styles.buttonArea}>
                     <Pressable onPress={()=>navigation.navigate('edit', {productID: data._id})}><Feather name="edit-3" size={19} color="black" /></Pressable>
-                    <Pressable><MaterialCommunityIcons name="delete-outline" size={19} color="black" /></Pressable>
+                    <Pressable><MaterialCommunityIcons name="delete-outline" size={19} color="black" onPress={()=>{setModalVisible(true), setId(data._id)}}/></Pressable>
               </View>
             </View>
           </View>
@@ -54,6 +73,18 @@ const ListProducts = ({ navigation }) => {
             </View>
             <View >
                 <FlatList data={result} renderItem={({ item }) => <Card data={item}/>} />
+
+                <Modal visible={modalVisible} animationType='slide' transparent={true} onRequestClose={()=>setModalVisible(false)}>
+                  <View style={styles.centeredView}>
+                    <View style={styles.modalView}>
+                      <Text style={{fontSize: 20}}>¿Estas seguro que quieres eliminar este articulo?</Text>
+                      <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+                          <TouchableOpacity style={{backgroundColor: 'red', height: 25, width: 50, justifyContent: 'center', alignItems: 'center', borderRadius: 20, margin: 5}} onPress={()=>setModalVisible(false)}><Text>No</Text></TouchableOpacity>
+                          <TouchableOpacity style={{backgroundColor: 'green', height: 25, width: 50, justifyContent: 'center', alignItems: 'center', borderRadius: 20, margin: 5}} onPress={()=>deleteProduct()}><Text>Si</Text></TouchableOpacity>
+                      </View>
+                    </View>
+                  </View>
+                </Modal>
             </View>
         </ScrollView>
     )
@@ -122,7 +153,28 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-end',
         position: 'relative',
         bottom: -18
-      }
+      },
+      centeredView: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 22,
+      },
+      modalView: {
+        margin: 20,
+        backgroundColor: 'white',
+        borderRadius: 20,
+        padding: 35,
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: {
+          width: 0,
+          height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5,
+      },
 });
 
 
