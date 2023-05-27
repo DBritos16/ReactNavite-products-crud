@@ -12,7 +12,7 @@ const CreateProduct = ({navigation}) => {
   });
 
   const addProduct = async()=>{
-    const req = await fetch('http://192.168.216.59:3000/product/create', {
+    const req = await fetch('http://192.168.0.15:3000/product/create', {
       method: 'POST',
       body: JSON.stringify(form),
       headers: {

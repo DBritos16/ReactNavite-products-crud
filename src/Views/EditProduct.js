@@ -14,7 +14,7 @@ const CreateProduct = ({navigation, route}) => {
   });
 
   const getProductInfo = async()=>{
-    const req = await fetch('http://192.168.216.59:3000/product/'+productID);
+    const req = await fetch('http://192.168.0.15:3000/product/'+productID);
 
     const res = await req.json();
 
@@ -24,7 +24,7 @@ const CreateProduct = ({navigation, route}) => {
   };
 
   const updateProduct = async()=>{
-    const req = await fetch('http://192.168.216.59:3000/product/update/'+productID, {
+    const req = await fetch('http://192.168.0.15:3000/product/update/'+productID, {
       method: 'PUT',
       body: JSON.stringify(form),
       headers: {
