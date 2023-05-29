@@ -1,11 +1,11 @@
 import React from 'react'
-import { Pressable, Text, View } from 'react-native'
+import { Image, Pressable, Text, View } from 'react-native'
 import { ScaledSheet } from 'react-native-size-matters'
 
 const Start = ({ navigation }) => {
     return (
         <View style={styles.container}>
-            <Text style={styles.tittle}>Products Shop</Text>
+            <Image source={require('../../assets/8978931.png')} style={styles.logo} />
             <Pressable onPress={() => navigation.navigate('home')} style={styles.button}><Text style={{color: 'white', fontSize: 20}}>Entrar</Text></Pressable>
         </View>
     )
@@ -18,9 +18,9 @@ const styles = ScaledSheet.create({
         alignItems: 'center',
         backgroundColor: '#1e0c42'
     },
-    tittle: {
-        color: 'white', 
-        fontSize: '40@s',
+    logo: {
+        width: '350@s',
+        height: '350@s',
     },
     button: {
         justifyContent: 'center',
@@ -28,7 +28,8 @@ const styles = ScaledSheet.create({
         backgroundColor: '#079ea6',
         height: '50@s',
         width: '100@s',
-        borderRadius: '20@s'
+        borderRadius: '20@s',
+        bottom: '70@s'
     }
 })
 
