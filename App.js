@@ -3,6 +3,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import ListProducts from "./src/Views/ListProducts";
 import CreateProduct from "./src/Views/CreateProduct";
 import EditProduct from "./src/Views/EditProduct";
+import Start from "./src/Views/Start";
 
 
 const Stack = createNativeStackNavigator();
@@ -10,10 +11,11 @@ const Stack = createNativeStackNavigator();
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="home">
+      <Stack.Navigator initialRouteName="start">
+        <Stack.Screen name="start" options={{headerShown: false}} component={Start}/>
         <Stack.Screen name="home" options={{headerShown: false}} component={ListProducts}/>
-        <Stack.Screen name="create" component={CreateProduct}/>
-        <Stack.Screen name="edit" component={EditProduct}/>
+        <Stack.Screen name="create" options={{headerTintColor: 'white', headerStyle: {backgroundColor: '#1e0c42'}, title: 'Agregar un producto nuevo'}} component={CreateProduct}/>
+        <Stack.Screen name="edit" options={{headerTintColor: 'white', headerStyle: {backgroundColor: '#1e0c42'}, title: 'Editar producto'}} component={EditProduct}/>
       </Stack.Navigator>
     </NavigationContainer>
   );

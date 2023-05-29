@@ -1,8 +1,10 @@
 import { useState } from "react"
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native"
+import { Text, TextInput, TouchableOpacity, View } from "react-native"
+import { ScaledSheet } from 'react-native-size-matters'
 
+const CreateProduct = ({navigation, route}) => {
 
-const CreateProduct = ({navigation}) => {
+  const {recargar} = route.params
 
   const [form, setForm] = useState({
     name: '',
@@ -21,6 +23,7 @@ const CreateProduct = ({navigation}) => {
     });
 
     if(req.ok){
+      recargar();
       return navigation.navigate('home');
     };
 
@@ -28,7 +31,6 @@ const CreateProduct = ({navigation}) => {
 
   return (
     <View style={styles.container}>
-        <Text style={styles.tittle}>Crear un nuevo producto</Text>
         <View>
           <TextInput style={styles.inputStyle} onChangeText={(value)=>setForm({...form, name: value})} placeholder="Name"></TextInput>
           <TextInput style={styles.inputStyle} onChangeText={(value)=>setForm({...form, description: value})} placeholder="Description"></TextInput>
@@ -43,32 +45,32 @@ const CreateProduct = ({navigation}) => {
   )
 }
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
   container: {
     flexDirection:'column',
     justifyContent: 'center',
     alignItems: "center",
-    margin: 10
+    margin: '10@s'
   },
   tittle: {
-    fontSize: 30,
+    fontSize: '30@s',
     textAlign: "center",
   },
   inputStyle: {
     backgroundColor: 'white',
-    width: 300,
-    height: 50,
-    borderRadius: 20,
-    paddingLeft: 15,
-    margin: 5
+    width: '300@s',
+    height: '50@s',
+    borderRadius: '20@s',
+    paddingLeft: '15@s',
+    margin: '5@s'
   },
   buttonStyle: {
     backgroundColor: 'green',
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 20,
+    borderRadius: '20@s',
     color: 'white',
-    height: 40
+    height: '40@s'
   }
 })
 

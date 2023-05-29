@@ -10,7 +10,6 @@ const ListProducts = ({ navigation }) => {
 
     const [products, setProducts] = useState([]);
     const [showOptions, setShowOptions] = useState(false);
-    const [modalCreateVisible, setModalCreateVisible] = useState(false);
     const [modalDeleteVisible, setModalDeleteVisible] = useState(false);
     const fadeAnim = useState(new Animated.Value(1))[0]; 
     const fadeAnim2 = useState(new Animated.Value(1))[0]; 
@@ -18,18 +17,15 @@ const ListProducts = ({ navigation }) => {
     const [id, setId] = useState('');
 
     const getProducts = async () => {
-
         const req = await fetch('http://192.168.0.15:3000/product');
         const res = await req.json();
         setProducts(res);
-        //alert('Cargado');
     }
 
     const result = filter? products.filter(e=> e.name.includes(filter)) : products
 
 
     const deleteProduct = async()=>{
-
       const req = await fetch(`http://192.168.0.15:3000/product/delete/${id}`, {
         method: 'DELETE'
       });
@@ -53,7 +49,11 @@ const ListProducts = ({ navigation }) => {
 
     const Card = ({ data }) => {
         return (
-          <TouchableOpacity onLongPress={()=>{setShowOptions(!showOptions), setId(data._id)}} style={{...styles.Cardcontainer, opacity: (showOptions&&id===data._id)?0.7: 1}}>
+          <TouchableOpacity 
+            onLongPress={()=>{setShowOptions(true), setId(data._id)}} 
+            onPressOut={()=>data._id === id && setShowOptions(false)}
+            style={{...styles.Cardcontainer, opacity: (showOptions&&id===data._id)?0.7: 1}}
+          >
               <View style={styles.imageContainer}>
                 <Image source={{uri: data.imageURL}} style={styles.image} />
               </View>
@@ -95,54 +95,53 @@ const ListProducts = ({ navigation }) => {
 
     return (
         <View style={styles.background}>
+
             <StatusBar backgroundColor={'#1e0c42'}/>
+
             <View style={styles.header}>
 
               <Animated.View style={{opacity: fadeAnim2, display: showOptions?'none':'flex'}}>
                 <View style={{...styles.headerContainer, display: showOptions?'none':'flex'}}>
                   <TextInput style={styles.searchInput} onChangeText={(value)=>setFilter(value)} placeholder='Buscar tarea' />
                   <Pressable style={styles.button} onPress={() => navigation.navigate('create', {recargar: getProducts})}><AntDesign name="addfile" size={24} color="white" /></Pressable>
-                  {/* <Pressable style={styles.button} onPress={() => getProducts()}><Ionicons name="reload" size={24} color="white" /></Pressable> */}
                 </View>
-
-
               </Animated.View>
+
               <Animated.View style={{opacity: fadeAnim, display: !showOptions?'none':'flex'}}>
                   <View style={styles.buttonArea}>
                       <Pressable onPress={()=>setShowOptions(!showOptions)}><Ionicons name='arrow-back' size={30} color={'white'}/></Pressable>
                       <View style={{flexDirection: 'row'}}>
-                        <Pressable onPress={()=>navigation.navigate('edit', {productID: id})}><Feather name="edit-3" size={30} color="white" /></Pressable>
+                        <Pressable onPress={()=>navigation.navigate('edit', {productID: id, recargar: getProducts, closeOptions: setShowOptions})}><Feather name="edit-3" size={30} color="white" /></Pressable>
                         <Pressable onPress={()=>{setModalDeleteVisible(true)}}><MaterialCommunityIcons name="delete-outline" size={30} color="white"/></Pressable>
                       </View>
                   </View>
               </Animated.View>
+
             </View>
 
-            
             <View style={styles.container}>
                 <FlatList data={result} renderItem={({ item }) => <Card data={item}/>} />
-
+            </View>
+            
                 <Modal visible={modalDeleteVisible} animationType='slide' transparent={true} onRequestClose={()=>setModalDeleteVisible(false)}>
                   <View style={styles.centeredView}>
                     <View style={styles.modalView}>
+
                       <Text style={{fontSize: 20}}>¿Estas seguro que quieres eliminar este articulo?</Text>
+
                       <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-                          <TouchableOpacity style={{...styles.buttonModal, backgroundColor: 'red'}} onPress={()=>setModalDeleteVisible(false)}><Text style={{color: 'white'}}>No</Text></TouchableOpacity>
-                          <TouchableOpacity style={{...styles.buttonModal, backgroundColor: 'green'}} onPress={()=>deleteProduct()}><Text style={{color: 'white'}}>Si</Text></TouchableOpacity>
+                          <TouchableOpacity style={{...styles.buttonModal, backgroundColor: 'red'}} onPress={()=>setModalDeleteVisible(false)}>
+                            <Text style={{color: 'white'}}>No</Text>
+                            </TouchableOpacity>
+
+                          <TouchableOpacity style={{...styles.buttonModal, backgroundColor: '#079ea6'}} onPress={()=>deleteProduct()}>
+                            <Text style={{color: 'white'}}>Si</Text>
+                            </TouchableOpacity>
                       </View>
+
                     </View>
                   </View>
                 </Modal>
-
-
-                <Modal visible={modalCreateVisible} animationType='slide' transparent={true} onRequestClose={()=>setModalCreateVisible(false)}>
-                  <View style={styles.centeredView}>
-                    <View style={styles.modalView}>
-                     
-                    </View>
-                  </View>
-                </Modal>
-            </View>
         </View>
     )
 }
@@ -158,8 +157,8 @@ const styles = ScaledSheet.create({
     },
     header: {
         backgroundColor: '#1e0c42',
-        height: '60@s',
-        paddingTop: '12@s',
+        height: '53@s',
+        paddingTop: '7@s'
     },
     headerContainer:{
       flexDirection: 'row',

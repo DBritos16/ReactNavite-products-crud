@@ -4,7 +4,7 @@ import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-nativ
 
 const CreateProduct = ({navigation, route}) => {
 
-  const { productID } = route.params;
+  const { productID, recargar, closeOptions } = route.params;
 
   const [form, setForm] = useState({
     name: '',
@@ -33,6 +33,7 @@ const CreateProduct = ({navigation, route}) => {
     });
 
     if(req.ok){
+      recargar();
       return navigation.navigate('home');
     };
 
@@ -40,11 +41,11 @@ const CreateProduct = ({navigation, route}) => {
 
   useEffect(()=>{
     getProductInfo();
+    closeOptions();
   },[])
 
   return (
     <View style={styles.container}>
-        <Text style={styles.tittle}>Editar {form.name}</Text>
         <View>
           <TextInput style={styles.inputStyle} value={form.name} onChangeText={(value)=>setForm({...form, name: value})} placeholder="Name"></TextInput>
           <TextInput style={styles.inputStyle} value={form.description} onChangeText={(value)=>setForm({...form, description: value})} placeholder="Description"></TextInput>
