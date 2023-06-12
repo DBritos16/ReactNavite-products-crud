@@ -4,11 +4,13 @@ import { Image, Pressable, StatusBar, Text, TextInput, View, Modal, TouchableOpa
 import { FlatList } from 'react-native';
 import { ScaledSheet } from 'react-native-size-matters'
 import { AntDesign, Ionicons, Feather, MaterialCommunityIcons } from '@expo/vector-icons';
+import { connect } from 'react-redux'
+import { getProducts } from '../components/redux/actions/products.actions';
 
 
-const ListProducts = ({ navigation }) => {
+const ListProducts = ({ navigation, getProducts, productos: {products, loading} }) => {
 
-    const [products, setProducts] = useState([]);
+    //const [products, setProducts] = useState([]);
     const [showOptions, setShowOptions] = useState(false);
     const [modalDeleteVisible, setModalDeleteVisible] = useState(false);
     const fadeAnim = useState(new Animated.Value(1))[0]; 
@@ -16,17 +18,17 @@ const ListProducts = ({ navigation }) => {
     const [filter, setFilter] = useState('');
     const [id, setId] = useState('');
 
-    const getProducts = async () => {
-        const req = await fetch('http://192.168.0.15:3000/product');
+    /* const getProducts = async () => {
+        const req = await fetch('http://192.168.216.125:3000/product');
         const res = await req.json();
         setProducts(res);
-    }
+    } */
 
     const result = filter? products.filter(e=> e.name.includes(filter)) : products
 
 
     const deleteProduct = async()=>{
-      const req = await fetch(`http://192.168.0.15:3000/product/delete/${id}`, {
+      const req = await fetch(`http://192.168.216.199:3000/product/delete/${id}`, {
         method: 'DELETE'
       });
 
@@ -40,7 +42,8 @@ const ListProducts = ({ navigation }) => {
     }
 
     useEffect(() => {
-        getProducts();
+      getProducts()
+      
     }, []);
 
     useEffect(()=>{
@@ -92,6 +95,10 @@ const ListProducts = ({ navigation }) => {
           }).start();
         }
       }, [showOptions]);
+
+      useEffect(()=>{
+        console.log(products);
+      },[products])
 
     return (
         <View style={styles.background}>
@@ -145,6 +152,11 @@ const ListProducts = ({ navigation }) => {
         </View>
     )
 }
+
+
+const mapStateToProps = (state) => ({
+  productos: state.products
+})
 
 const styles = ScaledSheet.create({
     background: {
@@ -243,11 +255,12 @@ const styles = ScaledSheet.create({
         height: '25@s',
         width: '50@s',
         justifyContent: 'center', 
-        alignItems: 'center', 
+        alignItems: 'center',
         borderRadius: '20@s', 
         margin: '5@s'
       }
 });
 
-
-export default ListProducts
+export default connect(mapStateToProps, { getProducts })(
+  ListProducts
+)
